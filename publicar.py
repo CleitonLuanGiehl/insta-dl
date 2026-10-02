@@ -79,8 +79,18 @@ def conferir_pacote(caminho):
     return divergentes
 
 
-def conferir_no_ar(versao, esperado, tentativas=6):
-    """O raw do GitHub tem cache curto; vale insistir algumas vezes."""
+def conferir_no_ar(versao, esperado, tentativas=16, espera=15):
+    """
+    Confere o que a maquina do colega veria.
+
+    O raw do GitHub fica atras de CDN com cache de alguns minutos: medido em
+    2026-10-02, o manifest novo apareceu na 7a tentativa, ~90s depois do push.
+    Por isso a paciencia e de minutos, nao de segundos - 30s davam um falso
+    "nao utilizavel" numa publicacao que estava perfeita.
+
+    De proposito confere a MESMA URL que o atualizador usa, sem truque de
+    cache-buster: verificar um endereco diferente nao prova o que importa.
+    """
     for tentativa in range(1, tentativas + 1):
         try:
             req = urllib.request.Request(RAW, headers={"User-Agent": "insta-dl"})
@@ -102,13 +112,14 @@ def conferir_no_ar(versao, esperado, tentativas=6):
             motivo = f"{type(e).__name__}: {e}"
         if tentativa < tentativas:
             log(f"   aguardando o GitHub propagar ({motivo})...")
-            time.sleep(5)
+            time.sleep(espera)
     return False, motivo
 
 
 def main(argv):
     versao = notas = None
     simular = False
+    so_conferir = False
     i = 0
     while i < len(argv):
         if argv[i] == "--versao" and i + 1 < len(argv):
@@ -119,6 +130,8 @@ def main(argv):
             notas = argv[i]
         elif argv[i] == "--simular":
             simular = True
+        elif argv[i] == "--conferir":
+            so_conferir = True
         elif argv[i] in ("-h", "--help"):
             print(__doc__)
             return 0
@@ -145,6 +158,16 @@ def main(argv):
                  f"{tag}/{nome_pequeno}")
     link_fixo = (f"https://github.com/{REPO}/releases/latest/download/"
                  f"{nome_portatil}")
+
+    if so_conferir:
+        log(f"conferindo a {versao} no ar, sem publicar nada")
+        ok, detalhe = conferir_no_ar(versao, sha256_de(pequeno))
+        log(("   OK: " if ok else "   ainda nao: ") + detalhe)
+        if ok:
+            log("")
+            log("Link PERMANENTE para mandar ao colega:")
+            log(f"  {link_fixo}")
+        return 0 if ok else 1
 
     log(f"publicando {versao}" + ("  (SIMULACAO)" if simular else ""))
 
@@ -224,7 +247,13 @@ def main(argv):
     else:
         ok, detalhe = conferir_no_ar(versao, digest)
     if not ok:
-        log(f"   ! a publicacao NAO esta utilizavel: {detalhe}")
+        if "ainda diz" in detalhe:
+            log(f"   ! o GitHub nao propagou dentro do tempo ({detalhe}).")
+            log("     A release e o push ESTAO feitos - isto e cache de CDN,")
+            log("     nao defeito. Confira em alguns minutos com:")
+            log(f"       python publicar.py --versao {versao} --conferir")
+        else:
+            log(f"   ! a publicacao NAO esta utilizavel: {detalhe}")
         return 1
     log(f"   atualizacao disponivel e conferida ({detalhe})")
 
