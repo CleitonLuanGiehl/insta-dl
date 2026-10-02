@@ -1,0 +1,13 @@
+# conteudo baixado: material de terceiros, nunca vai para o repo
+videos/
+
+# artefatos de build e runtime
+dist/
+.venv/
+bin/
+__pycache__/
+*.pyc
+.ultima-verificacao
+
+# credencial local, se algum dia existir
+publicacao.json

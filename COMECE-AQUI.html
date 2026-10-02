@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>insta-dl — comece aqui</title>
+<style>
+  :root {
+    --tinta: #1a1a1a;
+    --suave: #5c5c5c;
+    --borda: #e2e2e2;
+    --fundo: #fbfbfa;
+    --cartao: #ffffff;
+    --acento: #1f6feb;
+    --ok: #1a7f37;
+    --ok-fundo: #e9f7ec;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 40px 20px 72px;
+    background: var(--fundo); color: var(--tinta);
+    font: 16px/1.65 "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  .folha { max-width: 720px; margin: 0 auto; }
+  header { margin-bottom: 32px; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 8px; letter-spacing: -.02em; }
+  .sub { color: var(--suave); font-size: 17px; margin: 0; }
+  .passo {
+    background: var(--cartao); border: 1px solid var(--borda); border-radius: 12px;
+    padding: 24px 26px; margin-bottom: 16px;
+  }
+  .numero {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 50%; flex: none;
+    background: var(--acento); color: #fff; font-weight: 700; font-size: 15px;
+    margin-right: 10px;
+  }
+  .titulo-passo { display: flex; align-items: center; margin: 0 0 12px; font-size: 19px; }
+  p { margin: 0 0 12px; }
+  p:last-child { margin-bottom: 0; }
+  .arquivo {
+    display: inline-block; background: #f1f1ef; border: 1px solid var(--borda);
+    border-radius: 6px; padding: 5px 14px; font: 15px Consolas, monospace;
+    font-weight: 600;
+  }
+  .selo {
+    background: var(--ok-fundo); border-left: 3px solid var(--ok);
+    padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 22px 0 0;
+    font-size: 15px; color: #14532d;
+  }
+  code {
+    background: #f1f1ef; padding: 2px 7px; border-radius: 5px;
+    font: 14px/1.5 Consolas, "Cascadia Mono", monospace;
+  }
+  details {
+    background: var(--cartao); border: 1px solid var(--borda); border-radius: 12px;
+    padding: 16px 22px; margin-bottom: 12px;
+  }
+  summary { cursor: pointer; font-weight: 600; }
+  details p { margin-top: 12px; }
+  footer {
+    margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--borda);
+    color: var(--suave); font-size: 14px;
+  }
+  ul { margin: 8px 0 0; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div class="folha">
+
+  <header>
+    <h1>insta-dl</h1>
+    <p class="sub">Baixa o vídeo de um post ou reel do Instagram direto na sua
+    máquina, para você postar no grupo. Não precisa instalar nada.</p>
+  </header>
+
+  <div class="passo">
+    <h2 class="titulo-passo"><span class="numero">1</span> Copiar o link</h2>
+    <p>No Instagram, abra o post e use <strong>··· → Copiar link</strong>.</p>
+  </div>
+
+  <div class="passo">
+    <h2 class="titulo-passo"><span class="numero">2</span> Abrir a ferramenta</h2>
+    <p>Nesta mesma pasta, dê duplo clique em:</p>
+    <p><span class="arquivo">insta-dl.exe</span></p>
+    <p>Abre uma janela com o link que você copiou já preenchido. Clique em
+    <strong>Baixar</strong> e pronto — o vídeo e a legenda ficam na subpasta
+    <code>videos</code>, com o nome do perfil de origem no arquivo. É só
+    arrastar para o grupo.</p>
+  </div>
+
+  <div class="selo">
+    <strong>Não instala nada na sua máquina.</strong> A pasta é autocontida:
+    nada vai para o registro do Windows, nada pede senha de administrador e
+    nada roda sozinho depois. Para desinstalar, apague a pasta.
+  </div>
+
+  <details>
+    <summary>Esse .exe é confiável? De onde ele veio?</summary>
+    <p>Ele não é um programa empacotado por nós. É o
+    <strong>interpretador oficial do Python</strong>, do pacote
+    <em>embeddable</em> publicado em python.org, apenas renomeado para
+    <code>insta-dl.exe</code>.</p>
+    <p>Dá para conferir sozinho: clique com o botão direito no
+    <code>insta-dl.exe</code> → <strong>Propriedades</strong> →
+    <strong>Assinaturas Digitais</strong>. Vai aparecer
+    <strong>Python Software Foundation</strong>, com assinatura válida.</p>
+    <p>O que a ferramenta faz de fato está nos arquivos de texto da pasta
+    <code>app</code> — pode abrir qualquer um no Bloco de Notas e ler.</p>
+  </details>
+
+  <details>
+    <summary>Para onde vai o meu link?</summary>
+    <p>Para lugar nenhum além do próprio Instagram. A ferramenta roda na sua
+    máquina e fala direto com o <code>instagram.com</code>, do mesmo jeito que o
+    navegador faz quando você assiste o vídeo. Nenhum site intermediário recebe
+    o link, e nada é enviado para fora.</p>
+  </details>
+
+  <details>
+    <summary>Para que serve a pasta “sistema”?</summary>
+    <p>É o Python que vem junto, para você não precisar instalar nada. Pode
+    ignorar — mexer ali só quebra a ferramenta. As duas pastas que interessam
+    são <code>videos</code> (o que você baixou) e <code>app</code> (o código).</p>
+  </details>
+
+  <details>
+    <summary>Não abriu nada quando cliquei</summary>
+    <p>Confira duas coisas:</p>
+    <ul>
+      <li>A pasta precisa estar <strong>descompactada</strong>. Se você abriu o
+      zip e clicou de dentro dele, extraia para uma pasta de verdade primeiro
+      (ex.: <code>C:\insta-dl</code>) e tente de novo.</li>
+      <li>Se apareceu um arquivo <code>erro.log</code> na pasta, mande ele para
+      o Cleiton — é exatamente o que ele precisa para resolver.</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary>E as atualizações?</summary>
+    <p>A própria ferramenta se atualiza: no máximo uma vez por dia ela confere
+    se saiu versão nova, confere a assinatura do pacote e se atualiza sozinha.
+    São poucos kilobytes — o Python que veio junto não é baixado de novo. Você
+    não precisa fazer nada.</p>
+  </details>
+
+  <footer>
+    Ferramenta interna · qualquer dúvida ou problema, fale com o Cleiton.
+  </footer>
+
+</div>
+</body>
+</html>
