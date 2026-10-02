@@ -176,6 +176,16 @@ def main(argv):
     log(f"   sha256 do pacote de atualizacao: {digest[:16]}...")
 
     log("3. criando a release e subindo os assets")
+    # ⚠️ Em `gh release create`, `arquivo#texto` define o LABEL, nao o nome do
+    # asset: o nome vem do arquivo NO DISCO. Medido em 2026-10-02 - os assets
+    # subiram com versao no nome, o label ficou sem, e o link do manifest deu
+    # 404. Por isso aqui se copia para o nome final antes de enviar.
+    envio_portatil = os.path.join(DIST, nome_portatil)
+    envio_pequeno = os.path.join(DIST, nome_pequeno)
+    if not simular:
+        import shutil
+        shutil.copy2(portatil, envio_portatil)
+        shutil.copy2(pequeno, envio_pequeno)
     corpo = (
         "Baixe o **insta-dl-portatil.zip**, descompacte e de "
         "duplo clique no `insta-dl.exe`.\n\nNao precisa instalar nada: o Python "
@@ -183,8 +193,7 @@ def main(argv):
         "renomeado, com assinatura valida da Python Software Foundation.\n\n"
         + (notas or ""))
     if rodar(["gh", "release", "create", tag,
-              portatil + "#" + nome_portatil,
-              pequeno + "#" + nome_pequeno,
+              envio_portatil, envio_pequeno,
               "--title", f"insta-dl {versao}", "--notes", corpo], simular)[0] != 0:
         return 1
 
