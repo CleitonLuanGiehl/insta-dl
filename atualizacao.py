@@ -207,10 +207,16 @@ def conferir_zip(dados):
             raise RuntimeError(f"o zip esta corrompido (entrada {ruim}).")
         nomes = z.namelist()
     for nome in nomes:
-        if nome.endswith("/"):
-            raise RuntimeError(f"o pacote nao deveria ter pastas: {nome}")
-        if os.path.isabs(nome) or ".." in nome.replace("\\", "/").split("/") \
-                or ":" in nome:
+        normalizado = nome.replace("\\", "/")
+        # Entrada dentro de pasta nao e furo de seguranca - aplicar_pacote so
+        # copia o que esta na raiz -, mas seria DESCARTADA EM SILENCIO, e a
+        # atualizacao se diria bem-sucedida faltando um arquivo. Recusar aqui
+        # troca uma falha muda por uma falha visivel. Achado por teste em
+        # 2026-10-02.
+        if "/" in normalizado:
+            raise RuntimeError(
+                f"o pacote e plano: entrada em pasta nao entra ({nome})")
+        if os.path.isabs(nome) or ".." in normalizado.split("/") or ":" in nome:
             raise RuntimeError(f"caminho suspeito no pacote: {nome}")
     return nomes
 
