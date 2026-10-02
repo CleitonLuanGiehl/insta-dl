@@ -93,31 +93,63 @@ Garantias, todas com teste:
 
 ## Publicar uma versao nova
 
+Um comando, e ele se recusa a publicar pela metade:
+
 ```
-python empacotar.py --versao 1.2.0 --notas "o que mudou"
-python montar-portatil.py --versao 1.2.0     (so quando quiser refazer o zip grande)
+python publicar.py --versao 1.2.0 --notas "o que mudou"
+python publicar.py --versao 1.2.0 --simular     (mostra o plano, nao toca em nada)
 ```
 
-No Drive:
+Os seis passos, na ordem, cada um abortando o resto:
 
-1. sobe o `.zip` pequeno como arquivo novo, compartilha como *qualquer pessoa
-   com o link*, copia o ID
-2. `python empacotar.py --pacote-id <ID>`
-3. no `manifest.json` que **ja existe**: botao direito -> *Gerenciar versoes* ->
-   *Enviar nova versao* -> escolhe `dist\manifest.json`
+1. constroi os dois pacotes na versao pedida
+2. **confere que o empacotado e igual ao fonte, byte a byte** - foi assim que
+   uma release saiu defasada em 2026-10-02: build verde, teste verde, artefato
+   errado
+3. cria a release e sobe os assets
+4. escreve o `manifest.json`
+5. commita e empurra
+6. **confere anonimamente que esta tudo no ar e o sha256 bate** - ou seja, que
+   a maquina de um colega conseguiria atualizar
 
-**A regra que quebra tudo se ignorada:** o ID de um arquivo do Drive muda a
-cada upload novo. O `manifest.json` e o unico link que as maquinas dos colegas
-conhecem. Por isso ele se atualiza por *"Enviar nova versao"* (mantem o ID) e
-**nunca** por upload novo.
+Duas pegadinhas que custaram rodada e estao resolvidas no script:
 
-O zip pequeno e reproduzivel: mesmo conteudo gera o mesmo sha256.
+- em `gh release create`, `arquivo#texto` define o **label**, nao o nome do
+  asset: o nome vem do arquivo no disco. Com o nome errado, o link do manifest
+  da 404;
+- os assets sobem com nome **sem versao**, e e isso que faz o link permanente
+  existir. Ja o `manifest.json` aponta para a URL da **tag**, nao de `latest`,
+  porque o pacote que o sha256 descreve precisa ser imutavel.
 
-### Quem pode editar esses dois arquivos publica codigo
+### Os dois links
 
-A auto atualizacao roda o que estiver no pacote, em toda maquina que tem a
-ferramenta. O sha256 protege contra download corrompido, nao contra manifest
-trocado. Deixe os dois com edicao restrita a voce e link so de leitura.
+| Para que | URL |
+|---|---|
+| mandar para alguem baixar | `https://github.com/CleitonLuanGiehl/insta-dl/releases/latest/download/insta-dl-portatil.zip` |
+| o que a ferramenta le sozinha | `https://raw.githubusercontent.com/CleitonLuanGiehl/insta-dl/main/manifest.json` |
+
+Os dois sao **permanentes**: nao mudam de release para release, e nenhum pede
+credencial. Nao ha passo manual em nenhum momento.
+
+## Testes
+
+```
+python testes.py            o que nao depende de internet (rapido)
+python testes.py --rede     inclui Instagram e GitHub de verdade
+python testes.py -v         detalhado
+```
+
+Cada teste nasceu de um defeito real e o nome diz qual. Os tres que mais se
+pagam:
+
+- **a legenda e do post pedido, nao do vizinho** - a pagina de um post traz a
+  timeline do perfil junto (13 legendas medidas numa pagina), e "a primeira
+  legenda" acertava por sorte da ordenacao do JSON;
+- **o pacote construido nao esta defasado do fonte** - pegou o defeito acima
+  tres minutos depois de ser escrito;
+- **entrada em subpasta e recusada** - nao era furo de seguranca, mas o arquivo
+  seria descartado em silencio e a atualizacao se diria bem-sucedida faltando
+  um arquivo.
 
 ## Detalhes que quebram facil (nao "simplifique")
 

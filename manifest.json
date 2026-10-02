@@ -1,6 +1,6 @@
 {
-  "versao": "1.1.8",
-  "pacote_url": "https://github.com/CleitonLuanGiehl/insta-dl/releases/download/v1.1.8/insta-dl-atualizacao.zip",
-  "sha256": "f057526543912070eb56b25d532d76d6c91ffcf5ffc125b34b71a823e35b9276",
-  "notas": "suite de testes no repo; pacote recusa entrada em subpasta"
+  "versao": "1.1.9",
+  "pacote_url": "https://github.com/CleitonLuanGiehl/insta-dl/releases/download/v1.1.9/insta-dl-atualizacao.zip",
+  "sha256": "5a0d34ea9c625a821941b10b253a187ba8d77c376a0c2563394150df103796d9",
+  "notas": "README documenta o fluxo real de publicacao e os testes"
 }
