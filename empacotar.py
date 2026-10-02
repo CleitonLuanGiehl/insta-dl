@@ -106,12 +106,14 @@ def main(argv):
     versao = None
     manifest_id = None
     pacote_id = None
+    pacote_url = None
     notas = None
 
     i = 0
     while i < len(argv):
         arg = argv[i]
-        if arg in ("--versao", "--pacote-id", "--manifest-id", "--notas"):
+        if arg in ("--versao", "--pacote-id", "--pacote-url",
+                   "--manifest-id", "--notas"):
             i += 1
             if i >= len(argv):
                 print(f"ERRO: {arg} precisa de um valor.")
@@ -121,6 +123,8 @@ def main(argv):
                 versao = valor
             elif arg == "--pacote-id":
                 pacote_id = valor
+            elif arg == "--pacote-url":
+                pacote_url = valor
             elif arg == "--manifest-id":
                 manifest_id = valor
             else:
@@ -136,12 +140,12 @@ def main(argv):
     caminho_manifest = os.path.join(DIST, "manifest.json")
 
     # ---- etapa 2: so preenche o link do pacote no manifest ja gerado
-    if pacote_id and not versao:
+    if (pacote_id or pacote_url) and not versao:
         manifesto = ler_json(caminho_manifest)
         if not manifesto:
             print("ERRO: rode primeiro com --versao para gerar o dist\\manifest.json.")
             return 1
-        manifesto["pacote_url"] = (
+        manifesto["pacote_url"] = pacote_url.strip() if pacote_url else (
             "https://drive.google.com/uc?export=download&id=" + pacote_id.strip()
         )
         with open(caminho_manifest, "w", encoding="utf-8") as f:
@@ -177,8 +181,9 @@ def main(argv):
 
     manifesto = {
         "versao": versao,
-        "pacote_url": ("https://drive.google.com/uc?export=download&id=" + pacote_id.strip())
-                      if pacote_id else "COLE_AQUI_O_LINK_DO_ZIP",
+        "pacote_url": pacote_url.strip() if pacote_url else (
+            ("https://drive.google.com/uc?export=download&id=" + pacote_id.strip())
+            if pacote_id else "COLE_AQUI_O_LINK_DO_ZIP"),
         "sha256": digest,
         "notas": notas or "",
     }

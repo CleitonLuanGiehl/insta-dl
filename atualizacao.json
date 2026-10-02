@@ -1,4 +1,4 @@
 {
-  "_comentario": "manifest_id = ID do manifest.json publico no Google Drive. Pode usar manifest_url com qualquer URL direta em vez do Drive.",
-  "manifest_id": "1SKNI-j7_HJX-jRwLKViNI26up9Cy4EFJ"
+  "_comentario": "manifest_url = URL direta e ESTAVEL do manifest.json. No GitHub o raw de main nao muda de endereco, entao nao ha passo manual a cada release.",
+  "manifest_url": "https://raw.githubusercontent.com/CleitonLuanGiehl/insta-dl/main/manifest.json"
 }
